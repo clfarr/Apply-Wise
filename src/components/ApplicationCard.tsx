@@ -4,8 +4,10 @@ import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Modal } from './ui/Modal';
 import { ApplicationForm } from './ApplicationForm';
+import { CoverLetterGenerator } from './CoverLetterGenerator';
+import { CoverLetterViewer } from './CoverLetterViewer';
 import { useApplications } from '../context/ApplicationContext';
-import { ExternalLink, Calendar, Edit2, Trash2 } from 'lucide-react';
+import { ExternalLink, Calendar, Edit2, Trash2, FileText, Sparkles } from 'lucide-react';
 
 interface ApplicationCardProps {
   application: JobApplication;
@@ -24,6 +26,8 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ application })
   const { updateApplication, deleteApplication } = useApplications();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   const handleUpdate = async (data: any) => {
     await updateApplication(application.id, data);
@@ -72,6 +76,27 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ application })
           {application.notes && (
             <p className="text-gray-700 text-sm mb-4 line-clamp-3">{application.notes}</p>
           )}
+
+          {/* Cover Letter Actions */}
+          <div className="mb-3 flex gap-2">
+            <Button
+              size="sm"
+              onClick={() => setIsGeneratorOpen(true)}
+              className="flex-1 inline-flex items-center justify-center"
+            >
+              <Sparkles size={16} className="mr-1" />
+              Generate Cover Letter
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => setIsViewerOpen(true)}
+              className="flex-1 inline-flex items-center justify-center"
+            >
+              <FileText size={16} className="mr-1" />
+              View Letters
+            </Button>
+          </div>
 
           {/* Actions */}
           <div className="mt-auto flex flex-wrap gap-2">
@@ -145,6 +170,20 @@ export const ApplicationCard: React.FC<ApplicationCardProps> = ({ application })
           </div>
         </div>
       </Modal>
+
+      {/* Cover Letter Generator Modal */}
+      <CoverLetterGenerator
+        application={application}
+        isOpen={isGeneratorOpen}
+        onClose={() => setIsGeneratorOpen(false)}
+      />
+
+      {/* Cover Letter Viewer Modal */}
+      <CoverLetterViewer
+        applicationId={application.id}
+        isOpen={isViewerOpen}
+        onClose={() => setIsViewerOpen(false)}
+      />
     </>
   );
 };
